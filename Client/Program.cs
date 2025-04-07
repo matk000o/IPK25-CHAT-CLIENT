@@ -1,3 +1,17 @@
-﻿// See https://aka.ms/new-console-template for more information
+﻿// Martin Knor [xknorm01]
+// FIT VUT
+// 2025
 
-Console.WriteLine("Hello, World!");
+using System.Net.Sockets;
+using System.Net;
+
+namespace Client;
+
+class Program
+{
+    static void Main(string[] args)
+    {
+        var options = ClArgumentsParser.Parse(args);
+        Console.WriteLine(options.ToString());
+    }
+}
