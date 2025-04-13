@@ -21,7 +21,7 @@ static class Program
         }
         else
         {
-            Console.WriteLine("Currently, only the TCP variant is implemented in this guide.");
+            throw new NotImplementedException();
         }
     }
 }
