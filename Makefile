@@ -9,3 +9,20 @@ all: build
 
 build: 
 	dotnet publish ./Client -c Release /p:DebugType=None -o .
+
+discord: build
+	./ipk25-chat -s anton5.fit.vutbr.cz -t tcp
+
+restore:
+	dotnet nuget locals all --clear
+	dotnet restore --verbosity diagnostic
+
+clear:
+	dotnet nuget locals all --clear
+
+clean:
+	rm -rf $(APP_NAME)
+	rm -rf $(SRC_DIR)/$(BIN)
+	rm -rf $(SRC_DIR)/$(OBJ)
+#	rm -rf $(TEST_DIR)/$(BIN)
+#	rm -rf $(TEST_DIR)/$(OBJ)

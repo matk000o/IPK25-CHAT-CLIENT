@@ -1,12 +1,6 @@
-﻿// Martin Knor [xknorm01]
-// FIT VUT
-// 2025
+﻿namespace Client;
 
-using Client;
-using Client.Tcp;
-using Client.Enums;
-
-class Program
+static class Program
 {
     static async Task Main(string[] args)
     {
@@ -15,17 +9,19 @@ class Program
         if (options.ProtocolType.ToLower() == "tcp")
         {
             var tcpClient = new TcpChatClient(options.ServerString, options.Port);
+
+            Console.CancelKeyPress += async (sender, e) =>
+            {
+                e.Cancel = true;
+                Console.WriteLine("Interrupt detected. Disconnecting...");
+                await tcpClient.ShutdownAsync();
+            };
+            
             await tcpClient.RunAsync();
-        }
-        else if (options.ProtocolType.ToLower() == "udp")
-        {
-            Console.WriteLine("UDP is not implemented yet.");
-            ExitHandler.Error(ExitCode.UnsupportedProtocol);
         }
         else
         {
-            Console.WriteLine("Invalid protocol type. Use 'tcp' or 'udp'.");
-            ExitHandler.Error(ExitCode.CommandLineError);
+            Console.WriteLine("Currently, only the TCP variant is implemented in this guide.");
         }
     }
 }

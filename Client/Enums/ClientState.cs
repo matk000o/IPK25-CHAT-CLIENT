@@ -1,6 +1,6 @@
 namespace Client.Enums;
 
-public enum FsmState
+public enum ClientState
 {
     Start,
     Auth,
@@ -8,3 +8,4 @@ public enum FsmState
     Join,
     End
 }
+
