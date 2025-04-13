@@ -1,5 +1,4 @@
 using System.Text.RegularExpressions;
-using Client.Enums;
 
 namespace Client.Messages;
 
@@ -59,14 +58,3 @@ public static class MessageParser
         return new UnknownMessage(rawMessage);
     }
 }
-
-public class UnknownMessage : IMessage
-{
-    public MessageType Type => MessageType.Unknown;
-    public string RawText { get; }
-    public UnknownMessage(string rawText)
-    {
-        RawText = rawText;
-    }
-}
-
