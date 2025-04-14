@@ -9,6 +9,11 @@ public class ChatCommand : Command
     {
         if (client.State == ClientState.Open)
         {
+            if (chatMessage.Length > 60_000)
+            {
+                Console.WriteLine("ERROR: chat message is too long and must be truncated");
+                chatMessage = chatMessage[..60_000];
+            }
             // Build the chat message according to the protocol.
             string messageToSend = MessageFactory.BuildChatMessage(client.DisplayName, chatMessage);
             await client.SendMessageAsync(messageToSend);

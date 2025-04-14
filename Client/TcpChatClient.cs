@@ -83,7 +83,7 @@ public class TcpChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR receiving messages: {ex.Message}");
+            Console.Error.WriteLine($"ERROR: {ex.Message}");
             State = ClientState.End;
             await _cts.CancelAsync();
         }
@@ -255,7 +255,6 @@ public class ChatConnection
             char currentChar = buffer[0];
             sb.Append(currentChar);
             
-            // Check if the previous character was '\r' and the current is '\n'
             if (previousChar == '\r' && currentChar == '\n')
             {
                 // Remove the trailing "\r\n" from the message.
