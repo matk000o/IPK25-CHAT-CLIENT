@@ -1,4 +1,5 @@
 using System.Text.RegularExpressions;
+using Client.Constants;
 
 namespace Client.Messages;
 
@@ -6,23 +7,25 @@ public static class MessageParser
 {
     public static IMessage Parse(string rawMessage)
     {
-        if (rawMessage.StartsWith("REPLY"))
+        if (rawMessage.StartsWith("REPLY", StringComparison.OrdinalIgnoreCase))
         {
-            // Pattern: REPLY (OK|NOK) IS {content}
-            Regex replyPattern = new(@"^REPLY\s(OK|NOK)\sIS\s(.+)$", RegexOptions.Compiled);
-            var match = replyPattern.Match(rawMessage);
+            // Pattern: REPLY SP (OK|NOK) SP IS SP {content}
+            const string pattern = $@"^REPLY (OK|NOK) IS ({RegexPatterns.ContentPattern})$";
+            Regex replyRegex = new(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var match = replyRegex.Match(rawMessage);
             if (match.Success)
             {
-                bool success = match.Groups[1].Value == "OK";
+                bool success = match.Groups[1].Value.Equals("OK", StringComparison.OrdinalIgnoreCase);
                 string content = match.Groups[2].Value;
                 return new ReplyMessage(success, content, rawMessage);
             }
         }
-        else if (rawMessage.StartsWith("MSG"))
+        else if (rawMessage.StartsWith("MSG", StringComparison.OrdinalIgnoreCase))
         {
-            // Pattern: MSG FROM {sender} IS {message}
-            Regex chatPattern = new(@"^MSG\sFROM\s(\S+)\sIS\s(.+)$", RegexOptions.Compiled);
-            var match = chatPattern.Match(rawMessage);
+            // Pattern: MSG SP FROM SP {DNAME} SP IS SP {CONTENT}
+            const string pattern = $@"^MSG FROM ({RegexPatterns.DNamePattern}) IS ({RegexPatterns.ContentPattern})$";
+            Regex msgRegex = new(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var match = msgRegex.Match(rawMessage);
             if (match.Success)
             {
                 string sender = match.Groups[1].Value;
@@ -30,11 +33,12 @@ public static class MessageParser
                 return new ChatMessage(sender, message, rawMessage);
             }
         }
-        else if (rawMessage.StartsWith("ERR"))
+        else if (rawMessage.StartsWith("ERR", StringComparison.OrdinalIgnoreCase))
         {
-            // Pattern: ERR FROM {sender} IS {error}
-            Regex errPattern = new(@"^ERR\sFROM\s(\S+)\sIS\s(.+)$", RegexOptions.Compiled);
-            var match = errPattern.Match(rawMessage);
+            // Pattern: ERR SP FROM SP {DNAME} SP IS SP {CONTENT}
+            const string pattern = $@"^ERR FROM ({RegexPatterns.DNamePattern}) IS ({RegexPatterns.ContentPattern})$";
+            Regex errRegex = new(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var match = errRegex.Match(rawMessage);
             if (match.Success)
             {
                 string sender = match.Groups[1].Value;
@@ -42,11 +46,12 @@ public static class MessageParser
                 return new ErrorMessage(sender, error, rawMessage);
             }
         }
-        else if (rawMessage.StartsWith("BYE"))
+        else if (rawMessage.StartsWith("BYE", StringComparison.OrdinalIgnoreCase))
         {
-            // Pattern: BYE FROM {sender}
-            Regex byePattern = new(@"^BYE\sFROM\s(\S+)$", RegexOptions.Compiled);
-            var match = byePattern.Match(rawMessage);
+            // Pattern: BYE SP FROM SP {DNAME}
+            const string pattern = $@"^BYE FROM ({RegexPatterns.DNamePattern})$";
+            Regex byeRegex = new(pattern, RegexOptions.Compiled | RegexOptions.IgnoreCase);
+            var match = byeRegex.Match(rawMessage);
             if (match.Success)
             {
                 string sender = match.Groups[1].Value;
@@ -54,7 +59,7 @@ public static class MessageParser
             }
         }
         
-        // If nothing matches, return an "unknown" message.
+        // If nothing matches, return an unknown message.
         return new UnknownMessage(rawMessage);
     }
 }
