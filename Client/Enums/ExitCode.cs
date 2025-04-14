@@ -8,4 +8,5 @@ public enum ExitCode
     MalformedMsgError = 31,
     TimeOutError = 32,
     NoReplyError = 33,
+    UnexpectedReplyError = 34,
 }

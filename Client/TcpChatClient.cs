@@ -119,7 +119,10 @@ public class TcpChatClient
                         State = ClientState.Open;
                         break;
                     default:
-                        await SendErrorMessage("Unexpected REPLY message.");
+                        await SendErrorMessage("received unexpected REPLY message.");
+                        State = ClientState.End;
+                        await _cts.CancelAsync();
+                        ExitHandler.Error(ExitCode.UnexpectedReplyError);
                         break;
                 }
                 break;
@@ -145,11 +148,9 @@ public class TcpChatClient
 
             case MessageType.Unknown:
             default:
-                Console.WriteLine("ERROR: received malformed message form the server. msg:" + rawMessage);
-                await SendErrorMessage("Unexpected REPLY message.");
+                await SendErrorMessage("received malformed message form the server.");
                 State = ClientState.End;
                 await _cts.CancelAsync();
-                // TODO not really sure about this implementation 
                 ExitHandler.Error(ExitCode.MalformedMsgError);
                 break;
         }
