@@ -162,22 +162,17 @@ public class TcpChatClient
                     await SendMessageAsync(MessageFactory.BuildByeMessage(DisplayName));
                     break;
                 }
-
-                if (input.StartsWith('/'))
+                
+                // Delegate command processing to a CommandFactory.
+                var command = CommandFactory.GetCommand(input);
+                if (command != null)
                 {
-                    await ProcessCommandAsync(input);
+                    await command.ExecuteAsync(this, input);
                 }
                 else
                 {
-                    if (State == ClientState.Open)
-                    {
-                        await SendMessageAsync(MessageFactory.BuildChatMessage(DisplayName, input));
-                    }
-                    else
-                    {
-                        Console.WriteLine("ERROR: Cannot send messages in the current state.");
-                    }
-                }
+                    Console.WriteLine("ERROR: Unknown command");
+                }            
             }
         }
         catch (OperationCanceledException)
@@ -203,25 +198,6 @@ public class TcpChatClient
         if (completed == cancelTask)
             throw new OperationCanceledException(token);
         return await inputTask;
-    }
-
-    private async Task ProcessCommandAsync(string commandLine)
-    {
-        var parts = commandLine.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        if (parts.Length == 0)
-            return;
-
-        string commandName = parts[0].ToLower();
-        // Delegate command processing to a CommandFactory.
-        var command = CommandFactory.GetCommand(commandName);
-        if (command != null)
-        {
-            await command.ExecuteAsync(this, parts);
-        }
-        else
-        {
-            Console.WriteLine("ERROR: Unknown command");
-        }
     }
     
     public async Task SendMessageAsync(string message)

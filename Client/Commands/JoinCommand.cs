@@ -5,8 +5,9 @@ namespace Client.Commands;
 
 public class JoinCommand : Command
 {
-    public override async Task ExecuteAsync(TcpChatClient client, string[] args)
+    public override async Task ExecuteAsync(TcpChatClient client, string command)
     {
+        var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (client.State != ClientState.Open)
         {
             Console.WriteLine("ERROR: You must be in the Open state to join a channel.");
@@ -20,8 +21,6 @@ public class JoinCommand : Command
         string channelId = args[1];
         if (!CheckId(channelId))
             return;
-        if (client.Discord)
-            channelId = $"discord.{channelId}";
         client.State = ClientState.Join;
         await client.SendMessageAsync(MessageFactory.BuildJoinMessage(channelId, client.DisplayName, client.Discord));
     }

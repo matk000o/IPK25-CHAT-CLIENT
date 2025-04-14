@@ -5,7 +5,7 @@ namespace Client.Commands;
 
 public abstract class Command
 {
-    public abstract Task ExecuteAsync(TcpChatClient client, string[] args);
+    public abstract Task ExecuteAsync(TcpChatClient client, string command);
 
     protected static bool CheckId(string arg)
     {

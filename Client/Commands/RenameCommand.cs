@@ -2,8 +2,9 @@ namespace Client.Commands;
 
 public class RenameCommand : Command
 {
-    public override Task ExecuteAsync(TcpChatClient client, string[] args)
+    public override Task ExecuteAsync(TcpChatClient client, string command)
     {
+        var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (args.Length != 2)
         {
             Console.WriteLine("ERROR: usage: /rename {DisplayName}");

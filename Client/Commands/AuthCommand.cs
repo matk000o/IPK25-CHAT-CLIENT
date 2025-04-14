@@ -5,8 +5,10 @@ namespace Client.Commands;
 
 public class AuthCommand : Command
 {
-    public override async Task ExecuteAsync(TcpChatClient client, string[] args)
+    public override async Task ExecuteAsync(TcpChatClient client, string command)
     {
+        var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
         if (args.Length != 4)
         {
             Console.WriteLine("ERROR: usage: /auth {username} {secret} {displayName}");
