@@ -149,6 +149,8 @@ public class TcpChatClient
                 await SendErrorMessage("Unexpected REPLY message.");
                 State = ClientState.End;
                 await _cts.CancelAsync();
+                // TODO not really sure about this implementation 
+                ExitHandler.Error(ExitCode.MalformedMsgError);
                 break;
         }
     }
