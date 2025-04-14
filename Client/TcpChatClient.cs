@@ -59,12 +59,6 @@ public class TcpChatClient
         Console.WriteLine($"Connected to {_server}:{_port}");
     }
 
-    public async Task SendMessageAsync(string message)
-    {
-        // Append CRLF as required by the protocol.
-        await _connection.WriteAsync(message + "\r\n");
-    }
-
     private async Task ReceiveMessagesAsync(CancellationToken token)
     {
         try
@@ -156,12 +150,6 @@ public class TcpChatClient
         }
     }
 
-    private async Task SendErrorMessage(string error)
-    {
-        Console.WriteLine($"ERROR: {error}");
-        await SendMessageAsync($"ERR FROM {DisplayName} IS {error}");
-    }
-
     private async Task HandleUserInputAsync(CancellationToken token)
     {
         try
@@ -171,7 +159,7 @@ public class TcpChatClient
                 string? input = await ReadLineAsync(token);
                 if (input == null)
                 {
-                    await SendMessageAsync($"BYE FROM {DisplayName}");
+                    await SendMessageAsync(MessageFactory.BuildByeMessage(DisplayName));
                     break;
                 }
 
@@ -183,7 +171,7 @@ public class TcpChatClient
                 {
                     if (State == ClientState.Open)
                     {
-                        await SendMessageAsync($"MSG FROM {DisplayName} IS {input}");
+                        await SendMessageAsync(MessageFactory.BuildChatMessage(DisplayName, input));
                     }
                     else
                     {
@@ -235,12 +223,24 @@ public class TcpChatClient
             Console.WriteLine("ERROR: Unknown command");
         }
     }
+    
+    public async Task SendMessageAsync(string message)
+    {
+        // Append CRLF as required by the protocol.
+        await _connection.WriteAsync(message + "\r\n");
+    }
+    
+    private async Task SendErrorMessage(string error)
+    {
+        Console.WriteLine($"ERROR: {error}");
+        await SendMessageAsync(MessageFactory.BuildErrorMessage(DisplayName, error));
+    }
 
     public async Task ShutdownAsync()
     {
         if (State != ClientState.End)
         {
-            await SendMessageAsync($"BYE FROM {DisplayName}");
+            await SendMessageAsync(MessageFactory.BuildByeMessage(DisplayName));
             State = ClientState.End;
         }
         await _cts.CancelAsync();

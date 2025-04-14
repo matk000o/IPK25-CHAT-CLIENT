@@ -1,4 +1,5 @@
 using Client.Enums;
+using Client.Messages;
 
 namespace Client.Commands;
 
@@ -20,7 +21,6 @@ public class AuthCommand : Command
         
         client.DisplayName = displayName;
         client.State = ClientState.Auth;
-        string authMsg = $"AUTH {username} AS {displayName} USING {secret}";
-        await client.SendMessageAsync(authMsg);
+        await client.SendMessageAsync(MessageFactory.BuildAuthMessage(username, displayName, secret));
     }
 }

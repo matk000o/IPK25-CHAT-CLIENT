@@ -1,4 +1,5 @@
 using Client.Enums;
+using Client.Messages;
 
 namespace Client.Commands;
 
@@ -22,7 +23,6 @@ public class JoinCommand : Command
         if (client.Discord)
             channelId = $"discord.{channelId}";
         client.State = ClientState.Join;
-        string joinMsg = $"JOIN {channelId} AS {client.DisplayName}";
-        await client.SendMessageAsync(joinMsg);
+        await client.SendMessageAsync(MessageFactory.BuildJoinMessage(channelId, client.DisplayName, client.Discord));
     }
 }
