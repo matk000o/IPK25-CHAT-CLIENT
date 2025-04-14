@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using System.Text;
 using Client.Enums;
 using Client.Messages;
 using Client.Commands;
@@ -65,7 +66,7 @@ public class TcpChatClient
         {
             while (!token.IsCancellationRequested)
             {
-                string? line = await _connection.ReadLineAsync();
+                string? line = await _connection.ReadMessageAsync(token);
                 if (line == null)
                 {
                     Console.WriteLine("Server closed connection.");
@@ -236,7 +237,39 @@ public class ChatConnection
         _writer = new StreamWriter(stream) { AutoFlush = true };
     }
 
-    public async Task<string?> ReadLineAsync() => await _reader.ReadLineAsync();
+    // New method to read until the delimiter "\r\n" is encountered.
+    public async Task<string?> ReadMessageAsync(CancellationToken token)
+    {
+        var sb = new StringBuilder();
+        char[] buffer = new char[1];
+        int previousChar = -1;
+        
+        while (!token.IsCancellationRequested)
+        {
+            int read = await _reader.ReadAsync(buffer, 0, 1);
+            if (read == 0)
+            {
+                // End of stream.
+                break;
+            }
+            char currentChar = buffer[0];
+            sb.Append(currentChar);
+            
+            // Check if the previous character was '\r' and the current is '\n'
+            if (previousChar == '\r' && currentChar == '\n')
+            {
+                // Remove the trailing "\r\n" from the message.
+                return sb.ToString(0, sb.Length - 2);
+            }
+            
+            previousChar = currentChar;
+        }
+        
+        // If there is content but no terminator, you may decide to return it,
+        // or treat it as incomplete; here we return it if any.
+        return sb.Length > 0 ? sb.ToString() : null;
+    }
+
     public async Task WriteAsync(string message) => await _writer.WriteAsync(message);
 }
 
