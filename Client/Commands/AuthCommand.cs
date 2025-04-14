@@ -2,19 +2,22 @@ using Client.Enums;
 
 namespace Client.Commands;
 
-public class AuthCommand : ICommand
+public class AuthCommand : Command
 {
-    public async Task ExecuteAsync(TcpChatClient client, string[] args)
+    public override async Task ExecuteAsync(TcpChatClient client, string[] args)
     {
-        if (args.Length < 4)
+        if (args.Length != 4)
         {
             Console.WriteLine("ERROR: usage: /auth {username} {secret} {displayName}");
             return;
         }
+        
         string username = args[1];
         string secret = args[2];
         string displayName = args[3];
-
+        if (!CheckId(username) || !CheckSecret(secret) || !CheckDisplayName(displayName))
+            return;
+        
         client.DisplayName = displayName;
         client.State = ClientState.Auth;
         string authMsg = $"AUTH {username} AS {displayName} USING {secret}";

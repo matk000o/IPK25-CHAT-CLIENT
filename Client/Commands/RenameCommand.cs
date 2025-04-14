@@ -1,14 +1,16 @@
 namespace Client.Commands;
 
-public class RenameCommand : ICommand
+public class RenameCommand : Command
 {
-    public Task ExecuteAsync(TcpChatClient client, string[] args)
+    public override Task ExecuteAsync(TcpChatClient client, string[] args)
     {
-        if (args.Length < 2)
+        if (args.Length != 2)
         {
-            Console.WriteLine("ERROR: /rename requires a new display name");
+            Console.WriteLine("ERROR: usage: /rename {DisplayName}");
             return Task.CompletedTask;
         }
+        if (!CheckDisplayName(args[1]))
+            return Task.CompletedTask;
         client.DisplayName = args[1];
         Console.WriteLine($"Display name changed to {client.DisplayName}");
         return Task.CompletedTask;

@@ -2,7 +2,7 @@ namespace Client.Commands;
 
 public static class CommandFactory
 {
-    public static ICommand? GetCommand(string commandName)
+    public static Command? GetCommand(string commandName)
     {
         return commandName switch
         {
