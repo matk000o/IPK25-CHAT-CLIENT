@@ -4,7 +4,7 @@ namespace Client;
 
 using System;
 using Client.Enums;
-public class ExitHandler
+public abstract class ExitHandler
 {
     public static void Success()
     {

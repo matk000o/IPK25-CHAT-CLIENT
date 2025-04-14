@@ -8,18 +8,21 @@ namespace Client;
 public class TcpChatClient
 {
     // These properties are part of the public API for command handling.
-    public string DisplayName { get; set; }
-    public ClientState State { get; set; }
 
     private readonly string _server;
     private readonly int _port;
     private ChatConnection _connection;
     private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public TcpChatClient(string server, int port)
+    public readonly bool Discord;
+    public string DisplayName { get; set; }
+    public ClientState State { get; set; }
+
+    public TcpChatClient(string server, int port, bool discord)
     {
         _server = server;
         _port = port;
+        Discord = discord;
         DisplayName = "Anonymous";
         State = ClientState.Start;
     }
@@ -94,35 +97,30 @@ public class TcpChatClient
     private async Task ProcessServerMessage(string rawMessage)
     {
         // Parse the incoming message using the dedicated MessageParser.
-        IMessage message = MessageParser.Parse(rawMessage);
+        var message = MessageParser.Parse(rawMessage);
         switch (message.Type)
         {
             case MessageType.Reply:
                 var reply = (ReplyMessage)message;
-                if (State == ClientState.Auth)
+                switch (State)
                 {
-                    if (reply.Success)
-                    {
+                    case ClientState.Auth when reply.Success:
                         Console.WriteLine($"Action Success: {reply.Content}");
                         State = ClientState.Open;
-                    }
-                    else
-                    {
+                        break;
+                    case ClientState.Auth:
                         Console.WriteLine($"Action Fail: {reply.Content}");
-                        State = ClientState.End;
-                        await _cts.CancelAsync();
-                    }
-                }
-                else if (State == ClientState.Join)
-                {
-                    Console.WriteLine(reply.Success
-                        ? $"Action Success: {reply.Content}"
-                        : $"Action Fail: {reply.Content}");
-                    State = ClientState.Open;
-                }
-                else
-                {
-                    await SendErrorMessage("Unexpected REPLY message.");
+                        State = ClientState.Auth;
+                        break;
+                    case ClientState.Join:
+                        Console.WriteLine(reply.Success
+                            ? $"Action Success: {reply.Content}"
+                            : $"Action Fail: {reply.Content}");
+                        State = ClientState.Open;
+                        break;
+                    default:
+                        await SendErrorMessage("Unexpected REPLY message.");
+                        break;
                 }
                 break;
 
@@ -145,8 +143,12 @@ public class TcpChatClient
                 await _cts.CancelAsync();
                 break;
 
+            case MessageType.Unknown:
             default:
-                Console.WriteLine("Received: " + rawMessage);
+                Console.WriteLine("ERROR: received malformed message form the server. msg:" + rawMessage);
+                await SendErrorMessage("Unexpected REPLY message.");
+                State = ClientState.End;
+                await _cts.CancelAsync();
                 break;
         }
     }
@@ -170,7 +172,7 @@ public class TcpChatClient
                     break;
                 }
 
-                if (input.StartsWith("/"))
+                if (input.StartsWith('/'))
                 {
                     await ProcessCommandAsync(input);
                 }
@@ -199,10 +201,12 @@ public class TcpChatClient
         }
     }
 
-    private async Task<string?> ReadLineAsync(CancellationToken token)
+    // Console.ReadLine is blocking function and without this helper function
+    // the Console.ReadLine would leve the program hanging when trying to exit  
+    private static async Task<string?> ReadLineAsync(CancellationToken token)
     {
         // Wrap Console.ReadLine in a task and race against a cancellation delay.
-        var inputTask = Task.Run(() => Console.ReadLine());
+        var inputTask = Task.Run(Console.ReadLine, token);
         var cancelTask = Task.Delay(Timeout.Infinite, token);
         var completed = await Task.WhenAny(inputTask, cancelTask);
         if (completed == cancelTask)
@@ -218,39 +222,15 @@ public class TcpChatClient
 
         string commandName = parts[0].ToLower();
         // Delegate command processing to a CommandFactory.
-        ICommand? command = CommandFactory.GetCommand(commandName);
+        var command = CommandFactory.GetCommand(commandName);
         if (command != null)
         {
             await command.ExecuteAsync(this, parts);
-        }
-        else if (commandName == "/rename")
-        {
-            if (parts.Length < 2)
-            {
-                Console.WriteLine("ERROR: /rename requires a new display name");
-                return;
-            }
-            DisplayName = parts[1];
-            Console.WriteLine($"Display name changed to {DisplayName}");
-        }
-        else if (commandName == "/help")
-        {
-            PrintHelp();
         }
         else
         {
             Console.WriteLine("ERROR: Unknown command");
         }
-    }
-
-    private static void PrintHelp()
-    {
-        Console.WriteLine("Supported commands:");
-        Console.WriteLine("/auth <username> <secret> <displayName> - Authenticate to the server.");
-        Console.WriteLine("/join <channelId> - Join a channel.");
-        Console.WriteLine("/rename <displayName> - Change your display name.");
-        Console.WriteLine("/help - Show this help message.");
-        Console.WriteLine("/bye - Disconnect from the server.");
     }
 
     public async Task ShutdownAsync()

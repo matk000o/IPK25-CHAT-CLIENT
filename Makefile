@@ -11,7 +11,7 @@ build:
 	dotnet publish ./Client -c Release /p:DebugType=None -o .
 
 discord: build
-	./ipk25-chat -s anton5.fit.vutbr.cz -t tcp
+	./ipk25-chat -s anton5.fit.vutbr.cz -t tcp --discord
 
 restore:
 	dotnet nuget locals all --clear

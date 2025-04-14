@@ -8,7 +8,7 @@ static class Program
 
         if (options.ProtocolType.ToLower() == "tcp")
         {
-            var tcpClient = new TcpChatClient(options.ServerString, options.Port);
+            var tcpClient = new TcpChatClient(options.ServerString, options.Port, options.Discord);
 
             Console.CancelKeyPress += async (sender, e) =>
             {

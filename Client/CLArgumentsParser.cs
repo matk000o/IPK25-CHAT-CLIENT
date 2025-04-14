@@ -51,6 +51,10 @@ public record ClOptions
     public int UdpTimeout { get; set; }
 
     [Option('r', Default = 3, 
-            HelpText = "Maximum number of UDP retransmissions.")]
-    public int Retransmissions { get; set; }
+        HelpText = "Maximum number of UDP retransmissions.")]
+    public int Retransmissions { get; set; }    
+    
+    [Option("discord", Default = false, 
+        HelpText = "Enable connection via Discord integration.")]
+    public bool Discord { get; set; }
 }
