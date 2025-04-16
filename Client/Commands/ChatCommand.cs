@@ -15,8 +15,8 @@ public class ChatCommand : Command
                 chatMessage = chatMessage[..60_000];
             }
             // Build the chat message according to the protocol.
-            string messageToSend = MessageFactory.BuildChatMessage(client.DisplayName, chatMessage);
-            await client.SendMessageAsync(messageToSend);
+            byte[] message = MessageBuilder.BuildChatMessage(client.DisplayName, chatMessage);
+            await client.SendMessageAsync(message);
         }
         else
         {

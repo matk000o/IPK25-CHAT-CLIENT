@@ -10,9 +10,10 @@ all: build
 build: 
 	dotnet publish ./Client -c Release /p:DebugType=None -o .
 
-discord: build
+tcp: build
 	./ipk25-chat -s anton5.fit.vutbr.cz -t tcp --discord
-
+udp: build
+	./ipk25-chat -s anton5.fit.vutbr.cz -t udp --discord
 restore:
 	dotnet nuget locals all --clear
 	dotnet restore --verbosity diagnostic

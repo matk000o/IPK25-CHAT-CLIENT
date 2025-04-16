@@ -24,7 +24,7 @@ public class TcpChatClient
         _server = server;
         _port = port;
         Discord = discord;
-        DisplayName = "Anonymous";
+        DisplayName = "Unknown";
         State = ClientState.Start;
     }
 
@@ -32,6 +32,7 @@ public class TcpChatClient
     {
         try
         {
+            MessageBuilder.CurrentClientProtocol = ClientProtocolType.Tcp;
             await ConnectAsync();
 
             // Start concurrently receiving server messages and processing user input.
@@ -122,12 +123,12 @@ public class TcpChatClient
                 }
                 break;
 
-            case MessageType.Chat:
+            case MessageType.Msg:
                 var chat = (ChatMessage)message;
                 Console.WriteLine($"{chat.Sender}: {chat.MessageContent}");
                 break;
 
-            case MessageType.Error:
+            case MessageType.Err:
                 var error = (ErrorMessage)message;
                 Console.WriteLine($"ERROR FROM {error.Sender}: {error.ErrorContent}");
                 State = ClientState.End;
@@ -160,7 +161,7 @@ public class TcpChatClient
                 string? input = await ReadLineAsync(token);
                 if (input == null)
                 {
-                    await SendMessageAsync(MessageFactory.BuildByeMessage(DisplayName));
+                    await SendMessageAsync(MessageBuilder.BuildByeMessage(DisplayName));
                     break;
                 }
                 
@@ -201,23 +202,24 @@ public class TcpChatClient
         return await inputTask;
     }
     
-    public async Task SendMessageAsync(string message)
-    {
-        // Append CRLF as required by the protocol.
-        await _connection.WriteAsync(message + "\r\n");
-    }
-    
     private async Task SendErrorMessage(string error)
     {
         Console.WriteLine($"ERROR: {error}");
-        await SendMessageAsync(MessageFactory.BuildErrorMessage(DisplayName, error));
+        await SendMessageAsync(MessageBuilder.BuildErrorMessage(DisplayName, error));
+    }
+    
+    public async Task SendMessageAsync(byte[] messageArray)
+    {
+        string message = Encoding.ASCII.GetString(messageArray);
+        // Append CRLF as required by the protocol.
+        await _connection.WriteAsync(message);
     }
 
     public async Task ShutdownAsync()
     {
         if (State != ClientState.End)
         {
-            await SendMessageAsync(MessageFactory.BuildByeMessage(DisplayName));
+            await SendMessageAsync(MessageBuilder.BuildByeMessage(DisplayName));
             State = ClientState.End;
         }
         await _cts.CancelAsync();
@@ -271,4 +273,3 @@ public class ChatConnection
 
     public async Task WriteAsync(string message) => await _writer.WriteAsync(message);
 }
-

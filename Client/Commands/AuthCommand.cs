@@ -23,6 +23,7 @@ public class AuthCommand : Command
         
         client.DisplayName = displayName;
         client.State = ClientState.Auth;
-        await client.SendMessageAsync(MessageFactory.BuildAuthMessage(username, displayName, secret));
+        byte[] message = MessageBuilder.BuildAuthMessage(username, displayName, secret);
+        await client.SendMessageAsync(message);
     }
 }

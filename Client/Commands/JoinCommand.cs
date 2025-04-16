@@ -22,6 +22,7 @@ public class JoinCommand : Command
         if (!CheckId(channelId))
             return;
         client.State = ClientState.Join;
-        await client.SendMessageAsync(MessageFactory.BuildJoinMessage(channelId, client.DisplayName, client.Discord));
+        byte[] message = MessageBuilder.BuildJoinMessage(channelId, client.DisplayName, client.Discord);
+        await client.SendMessageAsync(message);
     }
 }
