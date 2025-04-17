@@ -5,7 +5,7 @@ namespace Client.Commands;
 
 public class JoinCommand : Command
 {
-    public override async Task ExecuteAsync(TcpChatClient client, string command)
+    public override async Task ExecuteAsync(IChatClient client, string command)
     {
         var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (client.State != ClientState.Open)

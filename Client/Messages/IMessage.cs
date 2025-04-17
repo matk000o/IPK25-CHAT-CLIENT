@@ -5,5 +5,5 @@ namespace Client.Messages;
 public interface IMessage
 {
     MessageType Type { get; }
-    string RawText { get; }
+    ushort MessageId { get; }
 }

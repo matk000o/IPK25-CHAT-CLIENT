@@ -34,6 +34,12 @@ public static class MessageBuilder
 
         return header.Concat(body).ToArray();
     }
+    
+    public static byte[] BuildConfirmMessage(ushort messageId)
+    {
+        // TODO most likely this is a bug and the message id has to be little endian
+        return [(byte)MessageType.Confirm, (byte)(messageId >> 8), (byte)(messageId & 0xFF)];
+    }
 
     /// <summary>
     /// Builds the AUTH message.

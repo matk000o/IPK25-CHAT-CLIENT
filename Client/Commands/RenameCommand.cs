@@ -2,7 +2,7 @@ namespace Client.Commands;
 
 public class RenameCommand : Command
 {
-    public override Task ExecuteAsync(TcpChatClient client, string command)
+    public override Task ExecuteAsync(IChatClient client, string command)
     {
         var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
         if (args.Length != 2)

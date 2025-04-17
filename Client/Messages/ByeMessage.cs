@@ -2,9 +2,9 @@ using Client.Enums;
 
 namespace Client.Messages;
 
-public class ByeMessage(string sender, string rawText) : IMessage
+public class ByeMessage(string sender, ushort messageId = 0) : IMessage
 {
     public MessageType Type => MessageType.Bye;
-    public string RawText { get; } = rawText;
+    public ushort MessageId { get; } = messageId;
     public string Sender { get; } = sender;
 }

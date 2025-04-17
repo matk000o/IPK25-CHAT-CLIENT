@@ -6,7 +6,7 @@ using Client.Commands;
 
 namespace Client;
 
-public class TcpChatClient
+public class TcpChatClient : IChatClient
 {
     // These properties are part of the public API for command handling.
 
@@ -15,7 +15,7 @@ public class TcpChatClient
     private ChatConnection _connection;
     private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
-    public readonly bool Discord;
+    public bool Discord { get; set; }
     public string DisplayName { get; set; }
     public ClientState State { get; set; }
 
@@ -93,7 +93,7 @@ public class TcpChatClient
     private async Task ProcessServerMessage(string rawMessage)
     {
         // Parse the incoming message using the dedicated MessageParser.
-        var message = MessageParser.Parse(rawMessage);
+        var message = MessageParser.ParseTcp(rawMessage);
         switch (message.Type)
         {
             case MessageType.Reply:
@@ -105,13 +105,13 @@ public class TcpChatClient
                         State = ClientState.Open;
                         break;
                     case ClientState.Auth:
-                        Console.WriteLine($"Action Fail: {reply.Content}");
+                        Console.WriteLine($"Action Failure: {reply.Content}");
                         State = ClientState.Auth;
                         break;
                     case ClientState.Join:
                         Console.WriteLine(reply.Success
                             ? $"Action Success: {reply.Content}"
-                            : $"Action Fail: {reply.Content}");
+                            : $"Action Failure: {reply.Content}");
                         State = ClientState.Open;
                         break;
                     default:

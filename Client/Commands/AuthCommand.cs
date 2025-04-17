@@ -5,8 +5,13 @@ namespace Client.Commands;
 
 public class AuthCommand : Command
 {
-    public override async Task ExecuteAsync(TcpChatClient client, string command)
+    public override async Task ExecuteAsync(IChatClient client, string command)
     {
+        if (client.State != ClientState.Auth && client.State != ClientState.Start)
+        {
+            Console.WriteLine("ERROR: you are already authorized");
+            return ;
+        }
         var args = command.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
         if (args.Length != 4)

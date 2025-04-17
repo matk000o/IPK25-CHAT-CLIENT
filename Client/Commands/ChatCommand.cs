@@ -5,7 +5,7 @@ namespace Client.Commands;
 
 public class ChatCommand : Command
 {
-    public override async Task ExecuteAsync(TcpChatClient client, string chatMessage)
+    public override async Task ExecuteAsync(IChatClient client, string chatMessage)
     {
         if (client.State == ClientState.Open)
         {
