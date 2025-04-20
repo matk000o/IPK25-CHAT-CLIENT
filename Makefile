@@ -11,19 +11,16 @@ build:
 	dotnet publish ./Client -c Release /p:DebugType=None -o .
 
 tcp: build
-	./ipk25-chat -s anton5.fit.vutbr.cz -t tcp --discord
+	./$(APP_NAME) -s 127.0.0.1 -t tcp
 udp: build
-	./ipk25-chat -s anton5.fit.vutbr.cz -t udp --discord
-restore:
-	dotnet nuget locals all --clear
-	dotnet restore --verbosity diagnostic
-
+	./$(APP_NAME) -s 127.0.0.1 -t udp
+tcpD: build
+	./$(APP_NAME) -s anton5.fit.vutbr.cz -t tcp --discord
+udpD: build
+	./$(APP_NAME) -s anton5.fit.vutbr.cz -t udp --discord
 clear:
 	dotnet nuget locals all --clear
-
 clean:
 	rm -rf $(APP_NAME)
 	rm -rf $(SRC_DIR)/$(BIN)
 	rm -rf $(SRC_DIR)/$(OBJ)
-#	rm -rf $(TEST_DIR)/$(BIN)
-#	rm -rf $(TEST_DIR)/$(OBJ)

@@ -37,8 +37,12 @@ public static class MessageBuilder
     
     public static byte[] BuildConfirmMessage(ushort messageId)
     {
-        // TODO most likely this is a bug and the message id has to be little endian
-        return [(byte)MessageType.Confirm, (byte)(messageId >> 8), (byte)(messageId & 0xFF)];
+        return
+        [
+            (byte)MessageType.Confirm,
+            (byte)(messageId >> 8),
+            (byte)(messageId & 0xFF)
+        ];
     }
 
     /// <summary>
