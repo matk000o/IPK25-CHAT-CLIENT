@@ -14,6 +14,8 @@ public class ChatCommand : Command
                 Console.WriteLine("ERROR: chat message is too long and must be truncated");
                 chatMessage = chatMessage[..60_000];
             }
+            if (!CheckContent(chatMessage))
+                return;
             // Build the chat message according to the protocol.
             byte[] message = MessageBuilder.BuildChatMessage(client.DisplayName, chatMessage);
             await client.SendMessageAsync(message);
