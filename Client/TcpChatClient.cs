@@ -12,7 +12,7 @@ public class TcpChatClient : IChatClient
 
     private readonly string _server;
     private readonly int _port;
-    private ChatConnection _connection;
+    private ChatConnection? _connection;
     private readonly CancellationTokenSource _cts = new CancellationTokenSource();
 
     public bool Discord { get; set; }
@@ -67,6 +67,8 @@ public class TcpChatClient : IChatClient
         {
             while (!token.IsCancellationRequested)
             {
+                if (_connection == null) return;
+
                 string? line = await _connection.ReadMessageAsync(token);
                 if (line == null)
                 {
@@ -212,6 +214,7 @@ public class TcpChatClient : IChatClient
     {
         string message = Encoding.ASCII.GetString(messageArray);
         // Append CRLF as required by the protocol.
+        if (_connection == null) return;
         await _connection.WriteAsync(message);
     }
 
