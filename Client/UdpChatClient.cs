@@ -66,15 +66,18 @@ public class UdpChatClient : IChatClient
     /// </summary>
     public async Task SendMessageAsync(byte[] message)
     {
-        if (message[0] == 0)
+        var messageType = (MessageType)message[0];
+        // Pure CONFIRM messages are sent without retries
+        if (messageType == MessageType.Confirm)
         {
             await _udpClient.SendAsync(message, message.Length, _remoteEndpoint);
-            // Console.WriteLine("sending confirm");
             return;
         }
-            
-        // Extract the MessageID from the UDP header. It is stored at bytes 1 and 2.
+
+        // Extract the MessageID
         ushort msgId = (ushort)((message[1] << 8) | message[2]);
+
+        // Prepare a TaskCompletionSource to await the CONFIRM
         var tcs = new TaskCompletionSource<bool>();
         _pendingConfirmations[msgId] = tcs;
 
@@ -82,27 +85,32 @@ public class UdpChatClient : IChatClient
         bool confirmed = false;
         while (retries <= _udpMaxRetries && !confirmed)
         {
-            // Send the UDP message.
             await _udpClient.SendAsync(message, message.Length, _remoteEndpoint);
-            // Wait for confirmation or timeout.
+
+            // Wait either for the confirmation or a timeout
             var timeoutTask = Task.Delay(_udpTimeout);
-            var completedTask = await Task.WhenAny(tcs.Task, timeoutTask);
-            if (completedTask == tcs.Task && tcs.Task.Result)
+            var completed = await Task.WhenAny(tcs.Task, timeoutTask);
+            if (completed == tcs.Task && tcs.Task.Result)
             {
                 confirmed = true;
             }
             else
             {
                 retries++;
-                // TODO debug console
-                // Console.WriteLine($"WARNING: No confirmation for message {msgId} (retry {retries}/{_udpMaxRetries})");
             }
         }
-        // Remove the pending confirmation entry.
+        // Clean up pending confirmation
         _pendingConfirmations.TryRemove(msgId, out _);
+
         if (!confirmed)
         {
             Console.WriteLine("ERROR: Message confirmation failed after maximum retries.");
+
+            // If it was an ERR or BYE (terminal) message, exit immediately
+            if (messageType is MessageType.Err or MessageType.Bye)
+            {
+                ExitHandler.Error(ExitCode.TimeOutError);
+            }
             await ShutdownAsync();
         }
     }
