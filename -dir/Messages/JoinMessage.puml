@@ -1,0 +1,9 @@
+@startuml
+class JoinMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + ChannelId : string <<get>>
+    + DisplayName : string <<get>>
+}
+IMessage <|-- JoinMessage
+@enduml

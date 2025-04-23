@@ -1,0 +1,10 @@
+@startuml
+class AuthMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + Username : string <<get>>
+    + DisplayName : string <<get>>
+    + Secret : string <<get>>
+}
+IMessage <|-- AuthMessage
+@enduml

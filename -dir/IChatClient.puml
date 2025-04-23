@@ -1,0 +1,11 @@
+@startuml
+interface IChatClient {
+    Discord : bool <<get>> <<set>>
+    DisplayName : string <<get>> <<set>>
+    State : ClientState <<get>> <<set>>
+    RunAsync() : Task
+    SendMessageAsync(message:byte[]) : Task
+    ShutdownAsync() : Task
+    - {static} <<async>> ReadLineAsync(token:CancellationToken) : Task<string?>
+}
+@enduml

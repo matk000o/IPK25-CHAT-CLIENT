@@ -1,0 +1,10 @@
+@startuml
+class ReplyMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + ReferenceMessageId : ushort <<get>>
+    + Success : bool <<get>>
+    + Content : string <<get>>
+}
+IMessage <|-- ReplyMessage
+@enduml

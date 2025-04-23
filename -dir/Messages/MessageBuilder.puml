@@ -1,0 +1,15 @@
+@startuml
+class MessageBuilder <<static>> {
+    + {static} CurrentClientProtocol : ClientProtocolType <<get>> <<set>>
+    - {static} _udpMessageIdCounter : ushort
+    - {static} GetNextUdpMessageId() : ushort
+    - {static} BuildTcpMessage(messageText:string) : byte[]
+    - {static} BuildUdpMessage(messageType:MessageType, fields:string[]) : byte[]
+    + {static} BuildConfirmMessage(messageId:ushort) : byte[]
+    + {static} BuildAuthMessage(username:string, displayName:string, secret:string) : byte[]
+    + {static} BuildJoinMessage(channelId:string, displayName:string, useDiscord:bool) : byte[]
+    + {static} BuildChatMessage(displayName:string, content:string) : byte[]
+    + {static} BuildByeMessage(displayName:string) : byte[]
+    + {static} BuildErrorMessage(displayName:string, error:string) : byte[]
+}
+@enduml

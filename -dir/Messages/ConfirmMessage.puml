@@ -1,0 +1,7 @@
+@startuml
+class ConfirmMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+}
+IMessage <|-- ConfirmMessage
+@enduml

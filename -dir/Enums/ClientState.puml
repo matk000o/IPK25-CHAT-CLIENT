@@ -1,0 +1,9 @@
+@startuml
+enum ClientState {
+    Start,
+    Auth,
+    Open,
+    Join,
+    End,
+}
+@enduml

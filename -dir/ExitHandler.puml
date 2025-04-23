@@ -1,0 +1,6 @@
+@startuml
+abstract class ExitHandler {
+    + {static} Success() : void
+    + {static} Error(exitCode:ExitCode, message:string?) : void
+}
+@enduml

@@ -1,0 +1,6 @@
+@startuml
+class RenameCommand {
+    + <<override>> ExecuteAsync(client:IChatClient, command:string) : Task
+}
+Command <|-- RenameCommand
+@enduml

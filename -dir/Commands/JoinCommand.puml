@@ -1,0 +1,6 @@
+@startuml
+class JoinCommand {
+    + <<override>> <<async>> ExecuteAsync(client:IChatClient, command:string) : Task
+}
+Command <|-- JoinCommand
+@enduml

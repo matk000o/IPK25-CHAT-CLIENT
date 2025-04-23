@@ -1,0 +1,8 @@
+@startuml
+class ByeMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + Sender : string <<get>>
+}
+IMessage <|-- ByeMessage
+@enduml

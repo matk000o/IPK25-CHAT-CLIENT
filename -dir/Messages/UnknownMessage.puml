@@ -1,0 +1,7 @@
+@startuml
+class UnknownMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+}
+IMessage <|-- UnknownMessage
+@enduml

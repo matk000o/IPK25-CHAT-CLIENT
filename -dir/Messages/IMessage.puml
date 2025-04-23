@@ -1,0 +1,6 @@
+@startuml
+interface IMessage {
+    Type : MessageType <<get>>
+    MessageId : ushort <<get>>
+}
+@enduml

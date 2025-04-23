@@ -48,7 +48,7 @@ public class TcpChatClient : IChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR: {ex.Message}");
+            Console.WriteLine($"ERROR: {ex.Message}");
             Environment.Exit(1);
         }
     }
@@ -58,7 +58,7 @@ public class TcpChatClient : IChatClient
         var tcpClient = new TcpClient();
         await tcpClient.ConnectAsync(_server, _port);
         _connection = new ChatConnection(tcpClient);
-        Console.WriteLine($"Connected to {_server}:{_port}");
+        // Console.WriteLine($"Connected to {_server}:{_port}");
     }
 
     private async Task ReceiveMessagesAsync(CancellationToken token)
@@ -86,7 +86,7 @@ public class TcpChatClient : IChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR: {ex.Message}");
+            Console.WriteLine($"ERROR: {ex.Message}");
             State = ClientState.End;
             await _cts.CancelAsync();
         }
@@ -185,7 +185,7 @@ public class TcpChatClient : IChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR processing input: {ex.Message}");
+            Console.WriteLine($"ERROR processing input: {ex.Message}");
             State = ClientState.End;
             await _cts.CancelAsync();
         }

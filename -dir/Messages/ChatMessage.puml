@@ -1,0 +1,9 @@
+@startuml
+class ChatMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + Sender : string <<get>>
+    + MessageContent : string <<get>>
+}
+IMessage <|-- ChatMessage
+@enduml

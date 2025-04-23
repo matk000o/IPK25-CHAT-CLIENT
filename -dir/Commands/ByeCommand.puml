@@ -1,0 +1,6 @@
+@startuml
+class ByeCommand {
+    + <<override>> <<async>> ExecuteAsync(client:IChatClient, command:string) : Task
+}
+Command <|-- ByeCommand
+@enduml

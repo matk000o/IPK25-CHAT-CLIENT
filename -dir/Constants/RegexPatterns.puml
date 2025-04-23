@@ -1,0 +1,12 @@
+@startuml
+class RegexPatterns <<static>> {
+    + <<const>> IdPattern : string = @"[A-Za-z0-9_-]{1,20&#125;"
+    + <<const>> SecretPattern : string = @"[A-Za-z0-9_-]{1,128&#125;"
+    + <<const>> ContentPattern : string = @"[\x20-\x7E\n]{1,60000&#125;"
+    + <<const>> DNamePattern : string = @"[\x21-\x7E]{1,20&#125;"
+    + <<const>> AnchoredIdPattern : string = @"^[A-Za-z0-9_-]{1,20&#125;$"
+    + <<const>> AnchoredSecretPattern : string = @"^[A-Za-z0-9_-]{1,128&#125;$"
+    + <<const>> AnchoredContentPattern : string = @"^[\x20-\x7E\n]{1,60000&#125;$"
+    + <<const>> AnchoredDNamePattern : string = @"^[\x21-\x7E]{1,20&#125;$"
+}
+@enduml

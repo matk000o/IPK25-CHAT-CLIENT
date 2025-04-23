@@ -1,0 +1,6 @@
+@startuml
+class AuthCommand {
+    + <<override>> <<async>> ExecuteAsync(client:IChatClient, command:string) : Task
+}
+Command <|-- AuthCommand
+@enduml

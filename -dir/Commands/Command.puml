@@ -1,0 +1,10 @@
+@startuml
+abstract class Command {
+    + {abstract} ExecuteAsync(client:IChatClient, command:string) : Task
+    # {static} CheckId(arg:string) : bool
+    # {static} CheckSecret(arg:string) : bool
+    # {static} CheckContent(arg:string) : bool
+    # {static} CheckDisplayName(arg:string) : bool
+    # {static} PrintHelp() : void
+}
+@enduml

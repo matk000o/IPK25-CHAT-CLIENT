@@ -1,0 +1,7 @@
+@startuml
+class PingMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+}
+IMessage <|-- PingMessage
+@enduml

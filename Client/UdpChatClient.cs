@@ -56,7 +56,7 @@ public class UdpChatClient : IChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR: {ex.Message}");
+            Console.WriteLine($"ERROR: {ex.Message}");
             Environment.Exit((int)ExitCode.ServerConnectionError);
         }
     }
@@ -144,7 +144,7 @@ public class UdpChatClient : IChatClient
         catch (OperationCanceledException) { /*…*/ }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR receiving messages: {ex.Message}");
+            Console.WriteLine($"ERROR receiving messages: {ex.Message}");
         }
     }
 
@@ -248,7 +248,7 @@ public class UdpChatClient : IChatClient
         }
         catch (Exception ex)
         {
-            Console.Error.WriteLine($"ERROR processing input: {ex.Message}");
+            Console.WriteLine($"ERROR processing input: {ex.Message}");
         }
     }
 

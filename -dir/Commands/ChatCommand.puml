@@ -1,0 +1,6 @@
+@startuml
+class ChatCommand {
+    + <<override>> <<async>> ExecuteAsync(client:IChatClient, chatMessage:string) : Task
+}
+Command <|-- ChatCommand
+@enduml

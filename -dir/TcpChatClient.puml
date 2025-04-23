@@ -1,0 +1,29 @@
+@startuml
+class TcpChatClient {
+    - <<readonly>> _server : string
+    - <<readonly>> _port : int
+    - _connection : ChatConnection
+    - <<readonly>> _cts : CancellationTokenSource
+    + Discord : bool <<get>> <<set>>
+    + DisplayName : string <<get>> <<set>>
+    + State : ClientState <<get>> <<set>>
+    + TcpChatClient(server:string, port:int, discord:bool)
+    + <<async>> RunAsync() : Task
+    - <<async>> ConnectAsync() : Task
+    - <<async>> ReceiveMessagesAsync(token:CancellationToken) : Task
+    - <<async>> ProcessServerMessage(rawMessage:string) : Task
+    - <<async>> HandleUserInputAsync(token:CancellationToken) : Task
+    - {static} <<async>> ReadLineAsync(token:CancellationToken) : Task<string?>
+    - <<async>> SendErrorMessage(error:string) : Task
+    + <<async>> SendMessageAsync(messageArray:byte[]) : Task
+    + <<async>> ShutdownAsync() : Task
+}
+class ChatConnection {
+    - <<readonly>> _reader : StreamReader
+    - <<readonly>> _writer : StreamWriter
+    + ChatConnection(tcpClient:TcpClient)
+    + <<async>> ReadMessageAsync(token:CancellationToken) : Task<string?>
+    + <<async>> WriteAsync(message:string) : Task
+}
+IChatClient <|-- TcpChatClient
+@enduml

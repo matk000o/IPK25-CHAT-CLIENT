@@ -14,7 +14,7 @@ public abstract class ExitHandler
     public static void Error(ExitCode exitCode, string? message = null)
     {
         if (message != null)
-            Console.Error.WriteLine($"ERROR: {message}");
+            Console.WriteLine($"ERROR: {message}");
         Environment.Exit((int)exitCode);
     }
 }   

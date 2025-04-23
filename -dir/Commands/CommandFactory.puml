@@ -1,0 +1,5 @@
+@startuml
+class CommandFactory <<static>> {
+    + {static} GetCommand(command:string) : Command?
+}
+@enduml

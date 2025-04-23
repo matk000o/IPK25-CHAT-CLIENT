@@ -1,0 +1,14 @@
+@startuml
+class ClArgumentsParser {
+    + {static} Parse(args:string[]) : ClOptions
+    - {static} HandleParseError(errs:IEnumerable<Error>) : void
+}
+class ClOptions <<record>> {
+    + ProtocolType : string <<get>> <<set>>
+    + ServerString : string <<get>> <<set>>
+    + Port : int <<get>> <<set>>
+    + UdpTimeout : int <<get>> <<set>>
+    + Retransmissions : int <<get>> <<set>>
+    + Discord : bool <<get>> <<set>>
+}
+@enduml

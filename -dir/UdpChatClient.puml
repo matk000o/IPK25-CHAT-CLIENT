@@ -1,0 +1,24 @@
+@startuml
+class UdpChatClient {
+    - _udpClient : UdpClient
+    - _remoteEndpoint : IPEndPoint
+    - <<readonly>> _cts : CancellationTokenSource
+    - <<readonly>> _udpTimeout : int
+    - <<readonly>> _udpMaxRetries : int
+    - <<readonly>> _pendingConfirmations : ConcurrentDictionary<ushort, TaskCompletionSource<bool>>
+    - <<readonly>> _processedMessageIds : ConcurrentDictionary<ushort, bool>
+    + Discord : bool <<get>> <<set>>
+    + DisplayName : string <<get>> <<set>>
+    + State : ClientState <<get>> <<set>>
+    + UdpChatClient(server:string, port:int, udpTimeout:int, udpMaxRetries:int, discord:bool)
+    + <<async>> RunAsync() : Task
+    + <<async>> SendMessageAsync(message:byte[]) : Task
+    - <<async>> ReceiveMessagesAsync(token:CancellationToken) : Task
+    - <<async>> ProcessServerMessageAsync(message:IMessage) : Task
+    - <<async>> HandleUserInputAsync(token:CancellationToken) : Task
+    - <<async>> SendErrorMessage(error:string) : Task
+    - {static} <<async>> ReadLineAsync(token:CancellationToken) : Task<string?>
+    + <<async>> ShutdownAsync() : Task
+}
+IChatClient <|-- UdpChatClient
+@enduml

@@ -1,0 +1,9 @@
+@startuml
+class ErrorMessage {
+    + Type : MessageType <<get>>
+    + MessageId : ushort <<get>>
+    + Sender : string <<get>>
+    + ErrorContent : string <<get>>
+}
+IMessage <|-- ErrorMessage
+@enduml

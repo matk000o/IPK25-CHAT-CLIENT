@@ -1,0 +1,8 @@
+@startuml
+class MessageParser <<static>> {
+    + {static} ParseTcp(rawMessage:string) : IMessage
+    + {static} ParseUdp(udpMessage:byte[]) : IMessage
+    - {static} ReadNullTerminated(data:byte[], offset:int) : string
+    - {static} SplitNullFields(data:byte[]) : string[]
+}
+@enduml
