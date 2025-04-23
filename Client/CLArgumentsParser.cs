@@ -6,7 +6,7 @@ namespace Client;
 using CommandLine;
 using Client.Enums;
 
-public class ClArgumentsParser
+public static class ClArgumentsParser
 {
     public static ClOptions Parse(string[] args)
     {
