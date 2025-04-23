@@ -11,11 +11,15 @@ second project in the IPK course (2025) at VUT (Brno University of Technology) b
 3. [Project set up](#3-project-set-up)\
    3.1[Program Execution](#31-program-execution)
 4. [Basic Theory](#4-basic-theory)\
-   4.1 [TCP](#41-tcp-transmission-control-protocol)\
-   4.2 [UDP](#42-udp-user-datagram-protocol)\
-   4.3 [Socket](#43-socket)
+   4.1 [TCP](#41-transmission-control-protocol-(tcp))\
+   4.2 [UDP](#42-user-datagram-protocol-(udp))\
+   4.3 [IPK25](#43-ipk25-chat)\
+   4.4 [Socket](#44-sockets)
 5. [Project Implementation](#5-project-implementation)
 6. [Testing](#6-testing)
+   6.1 [Unit](#61-unit-testing)
+   6.2 [Manual](#62-manual-testing)
+   6.3 [Automated](#63-automated-tests)
 7. [Bibliografy](#7-bibliografy)
 
 
@@ -38,14 +42,14 @@ The CLI program supports command line arguments as they are specified in the ass
 
 ## 4. Basic Theory
 
-### 4.1 Transmission Control Protocol (TCP)
+### 4.1 Transmission Control Protocol (TCP) [RFC9293]
 TCP provides a reliable, in‑order stream of bytes from one application to another. 
 It breaks your data into segments, wraps each in an IP packet, and ensures every byte arrives
 exactly once and in the right order. Because of these guarantees, TCP adds extra overhead and
 can be slower or larger in total data sent. It’s the protocol used for file transfers, email,
 and secure shells (SSH).
 
-### 4.2 User Datagram Protocol (UDP)
+### 4.2 User Datagram Protocol (UDP) [RFC768]
 UDP is a very simple protocol for sending discrete messages (“datagrams”) between applications.
 Unlike TCP, it does not guarantee delivery, ordering, or protection against duplicates.
 It’s used when low latency matters more than perfect reliability—for example, in video calls or live streaming.
@@ -68,7 +72,7 @@ the two can exchange data: the server processes each request and sends back a re
 I've decided to implement the project in the *C#* using *.NET 9+* framework. I've made this decision because i like the 
 high level nature of the language and also because of the excellent documentation of the base SDK.
 I've tried my best to approach the project in OOP way, dividing the project into sub-problems where each problem is 
-implemented in its own class, but I still think that the project could a lot of refactoring.
+implemented in its own class, but I still think that the project needs a lot of refactoring.
 
 The basic structure of the project consists of the following class groups:
 - **ChatClient** (UDP/TCP)
@@ -79,11 +83,13 @@ The basic structure of the project consists of the following class groups:
 - **Message**
   - data structure class
   - each message type implementation holds data needed to construct/prase the message that was caught or that is meant to be sent
-- **Other Helper Classes/Enums**
+- **Other Helper Classes**
   - ClArgumentsParser
   - ExitHandler
+  - MessageBuilder
+  - MessageParser
+  - CommandFactory
   - Enums
-  - Message builder/parser
 
 You can see basic project structure in the Class diagram below 
 
@@ -91,34 +97,72 @@ You can see basic project structure in the Class diagram below
 
 
 ## 6. Testing
-I have tested the application only manually against the reference server hosted at `anton5.fit.vutbr.cz` provided by
-the project assigners and by watching the client-server communication in wireshark with the ipk25-chat plugin
 
-### tcp
-- command line input:
+### 6.1 Unit testing
 
-![tcpInput](/Docs/tcpInput.png)
+I have created simple unit tests to check the correct functionality of functions used to implement this project.
+Classes that are checked by the unit test are: ``ClArgumentParser, MessageBuilder, MessageParser, CommandFactory``\
+The tests can be run using ``make test`` command in the root directory
+
+example output of running tests in CL:
+
+```shell
+dotnet test
+Restore complete (1.1s)
+  Client succeeded (2.8s) → Client/bin/Debug/linux-x64/ipk25-chat.dll
+  ClientTest succeeded (0.7s) → ClientTest/bin/Debug/net9.0/ClientTest.dll
+[xUnit.net 00:00:00.00] xUnit.net VSTest Adapter v2.8.2+699d445a1a (64-bit .NET 9.0.3)
+[xUnit.net 00:00:00.07]   Discovering: ClientTest
+[xUnit.net 00:00:00.12]   Discovered:  ClientTest
+[xUnit.net 00:00:00.13]   Starting:    ClientTest
+[xUnit.net 00:00:00.25]   Finished:    ClientTest
+  ClientTest test succeeded (1.0s)
+
+Test summary: total: 33, failed: 0, succeeded: 33, skipped: 0, duration: 1.0s
+Build succeeded in 5.9s
+martin@KnorPc:~/school_LX/IPK/IPK25-CHAT-CLIENT$ 
+```
+
+
+
+### 6.2 manual testing
+
+I have tested the functionality of the application manually against the reference server hosted at `anton5.fit.vutbr.cz` provided by
+the project assigners. I've caught the client-server communication in wireshark with the ipk25-chat plugin
+
+#### tcp
+- command line input:\
+![tcpInput](/Docs/tcpInputCopy.png)
 
 - wireshark:
-![tcpTestCase](/Docs/tcpTestCase.png)
+![tcpTestCase](/Docs/tcpTestCaseCopy.png)
 
-### udp
+#### udp
 
-- honestly i don't have time to finish this section
+- command line input:\
+![udpInput](/Docs/udpInputcopy.png)
+
+- wireshark:\
+sadly for the UDP test case I wasn't able to install the ipk25-chat plugin for wireshark, so it's hard the content of the messages.
+![udpTestCase](/Docs/udpTestCase.png)
+
+### 6.3 automated tests
+- to test the correct formating of my programs output I've used automated student tests **created by Tomáš HOBZA and Vladyslav MALASHCHUK** [1]
 
 ## 7. Bibliography
 
-https://www.ibm.com/docs/en/i/7.3.0?topic=programming-how-sockets-work
-
-https://www.c-sharpcorner.com/article/socket-programming-in-C-Sharp/
-
-https://learn.microsoft.com/en-us/dotnet/fundamentals/networking/sockets/socket-services#create-a-socket-client
-
-https://learn.microsoft.com/en-us/dotnet/api/system.net.sockets.networkstream.-ctor?view=net-9.0#system-net-sockets-networkstream-ctor(system-net-sockets-socket)
-
-https://www.rfc-editor.org/rfc/rfc5234
-
-https://www.cs.uaf.edu/courses/cs441/notes/protocols/index.html
+[RFC768] Postel, J. User Datagram Protocol [online]. March 1997. [cited 2025-04-21]. DOI: 10.17487/RFC0768. Available at:\
+https://datatracker.ietf.org/doc/html/rfc768 \
+[RFC9293] Eddy, W. Transmission Control Protocol (TCP) [online]. August 2022. [cited 2025-04-21]. DOI: 10.17487/RFC9293. Available at:\
+https://datatracker.ietf.org/doc/html/rfc9293#name-key-tcp-concept \
+[IBM] IBM. How Sockets Work [online]. [used 2025-04-21]. Available at:\
+https://www.ibm.com/docs/en/i/7.3?topic=programming-how-sockets-work \
+[Microsoft] Microsoft. System.Timers.Timer Class [online]. [used 2025-04-21]. Available at:\
+https://learn.microsoft.com/en-us/dotnet/api/system.timers.timer?view=net-8.0 \
+[Microsoft] Microsoft. Asynchronous Programming in C# [online]. [used 2025-04-21]. Available at:\
+https://learn.microsoft.com/en-us/dotnet/csharp/asynchronous-programming/ \
+[1] Vladyslav MALASHCHUK, Tomáš HOBZA, et al. VUT_IPK_CLIENT_TESTS [online]. GitHub, 2025 [cit. 2025-04-21]. Available at:\
+https://github.com/Vlad6422/VUT_IPK_CLIENT_TESTS
 
 
 
