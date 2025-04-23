@@ -1,4 +1,4 @@
-APP_NAME = ipk25-chat
+APP_NAME = ipk25chat-client
 SRC_DIR = ./Client/
 BIN = bin
 OBJ = obj
@@ -18,6 +18,9 @@ tcpD: build
 	./$(APP_NAME) -s anton5.fit.vutbr.cz -t tcp --discord
 udpD: build
 	./$(APP_NAME) -s anton5.fit.vutbr.cz -t udp --discord
+
+test:
+	dotnet test
 clear:
 	dotnet nuget locals all --clear
 clean:
